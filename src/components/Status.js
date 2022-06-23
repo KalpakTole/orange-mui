@@ -1,6 +1,7 @@
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box, Grid, Paper, Typography } from '@mui/material';
+import { lightGreen, lightBlue, orange, red } from '@mui/material/colors';
 
 const Item = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -17,27 +18,39 @@ const Item = styled(Paper)(({ theme }) => ({
 const Status = (props) => {
 	return (
 		<Box sx={{ width: '25%' }}>
-			<Grid container rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+			<Grid container rowSpacing={2} columnSpacing={2}>
 				<Grid item xs={6}>
-					<Item>
+					<Item
+						sx={{ backgroundColor: lightBlue['A100'], cursor: 'pointer' }}
+						onClick={() => props.taskVisibilityHandler('new')}
+					>
 						<Typography variant='h5'>New</Typography>
 						<Typography variant='h3'>{props.allTasksStatus['new']}</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={6}>
-					<Item>
+					<Item
+						sx={{ backgroundColor: orange['A100'], cursor: 'pointer' }}
+						onClick={() => props.taskVisibilityHandler('inProgress')}
+					>
 						<Typography variant='h5'>In Progress</Typography>
 						<Typography variant='h3'>{props.allTasksStatus['inProgress']}</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={6}>
-					<Item>
+					<Item
+						sx={{ backgroundColor: lightGreen['A100'], cursor: 'pointer' }}
+						onClick={() => props.taskVisibilityHandler('done')}
+					>
 						<Typography variant='h5'>Done</Typography>
 						<Typography variant='h3'>{props.allTasksStatus['done']}</Typography>
 					</Item>
 				</Grid>
 				<Grid item xs={6}>
-					<Item>
+					<Item
+						sx={{ backgroundColor: red['A100'], cursor: 'pointer' }}
+						onClick={() => props.taskVisibilityHandler('failed')}
+					>
 						<Typography variant='h5'>Failed</Typography>
 						<Typography variant='h3'>{props.allTasksStatus['failed']}</Typography>
 					</Item>

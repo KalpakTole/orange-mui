@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { lightGreen, lightBlue, orange, red } from '@mui/material/colors';
 
 import {
 	Box,
@@ -65,17 +66,78 @@ const Tasks = (props) => {
 	return (
 		<Box sx={{ width: '40%', height: '100%' }}>
 			<Paper sx={{ width: '100%', height: '100%', position: 'relative' }} elevation={3}>
-				<List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-					{props.allTasks.map((currentTask) => (
-						<ListItem key={currentTask['taskId']}>
-							<ListItemAvatar>
-								<Avatar>
-									<TaskIcon />
-								</Avatar>
-							</ListItemAvatar>
-							<ListItemText primary={currentTask['title']} secondary={currentTask['description']} />
-						</ListItem>
-					))}
+				<List
+					sx={{
+						width: '100%',
+						bgcolor: 'background.paper',
+						display: 'flex',
+						flexDirection: 'column',
+						gap: '0.5rem',
+						padding: '0',
+					}}
+				>
+					{props.allTasks.map((currentTask) => {
+						if (currentTask['taskStatus'] === 'New' && props.toggleTaskVisibility['new']) {
+							return (
+								<ListItem key={currentTask['taskId']} sx={{ backgroundColor: lightBlue['A100'] }}>
+									<ListItemAvatar>
+										<Avatar sx={{ backgroundColor: lightBlue[900] }}>
+											<TaskIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText
+										primary={currentTask['title']}
+										secondary={currentTask['description']}
+									/>
+								</ListItem>
+							);
+						}
+						if (currentTask['taskStatus'] === 'In Progress' && props.toggleTaskVisibility['inProgress']) {
+							return (
+								<ListItem key={currentTask['taskId']} sx={{ backgroundColor: orange['A100'] }}>
+									<ListItemAvatar>
+										<Avatar sx={{ backgroundColor: orange[900] }}>
+											<TaskIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText
+										primary={currentTask['title']}
+										secondary={currentTask['description']}
+									/>
+								</ListItem>
+							);
+						}
+						if (currentTask['taskStatus'] === 'Done' && props.toggleTaskVisibility['done']) {
+							return (
+								<ListItem key={currentTask['taskId']} sx={{ backgroundColor: lightGreen['A100'] }}>
+									<ListItemAvatar>
+										<Avatar sx={{ backgroundColor: lightGreen[900] }}>
+											<TaskIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText
+										primary={currentTask['title']}
+										secondary={currentTask['description']}
+									/>
+								</ListItem>
+							);
+						}
+						if (currentTask['taskStatus'] === 'Failed' && props.toggleTaskVisibility['failed']) {
+							return (
+								<ListItem key={currentTask['taskId']} sx={{ backgroundColor: red['A100'] }}>
+									<ListItemAvatar>
+										<Avatar sx={{ backgroundColor: red[900] }}>
+											<TaskIcon />
+										</Avatar>
+									</ListItemAvatar>
+									<ListItemText
+										primary={currentTask['title']}
+										secondary={currentTask['description']}
+									/>
+								</ListItem>
+							);
+						}
+					})}
 				</List>
 				<Fab
 					color='primary'
@@ -120,9 +182,14 @@ const Tasks = (props) => {
 							<MenuItem value=''>
 								<em>None</em>
 							</MenuItem>
-							{allUsers.map((user) => (
-								user.name !== props.currentUser.displayName && <MenuItem key={user.uid} value={user.name}>{user.name}</MenuItem>
-							))}
+							{allUsers.map(
+								(user) =>
+									user.name !== props.currentUser.displayName && (
+										<MenuItem key={user.uid} value={user.name}>
+											{user.name}
+										</MenuItem>
+									)
+							)}
 						</Select>
 						<FormHelperText>Select the user whom you want to assign the task</FormHelperText>
 					</FormControl>

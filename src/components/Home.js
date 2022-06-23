@@ -6,7 +6,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { database } from '../firebase';
 import { ref, child, get, set } from 'firebase/database';
 import { v1 as uuidv1 } from 'uuid';
-import { useAuth } from '../contexts/AuthContext'
+import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
 	const [assignee, setAssignee] = useState('');
@@ -15,6 +15,12 @@ const Home = () => {
 	const [allTasks, setAllTasks] = useState([]);
 	const [allTasksStatus, setAllTasksStatus] = useState({ new: 0, inProgress: 0, done: 0, failed: 0 });
 	const [open, setOpen] = useState(false);
+	const [toggleTaskVisibility, setToggleTaskVisibility] = useState({
+		new: true,
+		inProgress: true,
+		done: true,
+		failed: true,
+	});
 
 	const { currentUser } = useAuth();
 
@@ -36,6 +42,29 @@ const Home = () => {
 
 	const handleEndDateChange = (newValue) => {
 		setEndDate(newValue);
+	};
+
+	const taskVisibilityHandler = (type) => {
+		if (type === 'new') {
+			setToggleTaskVisibility(prevState => {
+				return { ...prevState, 'new': !prevState.new };
+			})
+		}
+		if (type === 'inProgress') {
+			setToggleTaskVisibility(prevState => {
+				return {...prevState, 'inProgress': !prevState.inProgress}
+			})
+		}
+		if (type === 'done') {
+			setToggleTaskVisibility((prevState) => {
+				return { ...prevState, done: !prevState.done };
+			});
+		}
+		if (type === 'failed') {
+			setToggleTaskVisibility((prevState) => {
+				return { ...prevState, failed: !prevState.failed };
+			});
+		}
 	};
 
 	const handleAddTaskSubmit = (event) => {
@@ -105,8 +134,8 @@ const Home = () => {
 	return (
 		<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', height: '100%' }}>
 			<ResponsiveAppBar currentUser={currentUser} />
-			<Box sx={{ display: 'flex', gap: '1rem', paddingBlockEnd: '1rem', flexGrow: 1 }}>
-				<Status allTasksStatus={allTasksStatus} />
+			<Box sx={{ display: 'flex', gap: '1rem', paddingBlockEnd: '1rem', flexGrow: 1, marginInline: '1rem' }}>
+				<Status allTasksStatus={allTasksStatus} taskVisibilityHandler={taskVisibilityHandler} />
 				<Tasks
 					currentUser={currentUser}
 					allTasks={allTasks}
@@ -120,6 +149,7 @@ const Home = () => {
 					open={open}
 					handleOpen={handleOpen}
 					handleClose={handleClose}
+					toggleTaskVisibility={toggleTaskVisibility}
 				/>
 			</Box>
 		</Box>
