@@ -1,0 +1,32 @@
+Create account > Lead/executor
+
+Top Nav Bar:
+1. Status
+2. AllTask > FAB which creates a task
+3. Calendar
+4. Profile
+5. Team
+Logout
+
+users:
+1. name
+2. email
+3. team 
+
+
+allTasks:
+1. title
+2. description
+3. created
+4. taskId
+5. taskStatus - new/inprogress/inreview/done/failed
+6. assignee - jyala assign zalay toh
+7. start date
+8. end date
+
+createTaskModal =>
+1. title
+2. description
+3. assign to
+4. start date
+5. end date
