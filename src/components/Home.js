@@ -4,12 +4,12 @@ import { Box } from '@mui/material';
 import ResponsiveAppBar from './ResponsiveAppBar';
 import React, { useState, useEffect, useCallback } from 'react';
 import { database } from '../firebase';
-import { ref, child, get, set } from 'firebase/database';
+import { ref, child, get, set, update } from 'firebase/database';
 import { v1 as uuidv1 } from 'uuid';
 import { useAuth } from '../contexts/AuthContext';
 
 const Home = () => {
-	const [assignee, setAssignee] = useState('');
+	const [assignee, setAssignee] = useState('self');
 	const [startDate, setStartDate] = useState(new Date());
 	const [endDate, setEndDate] = useState(new Date());
 	const [allTasks, setAllTasks] = useState([]);
@@ -46,14 +46,14 @@ const Home = () => {
 
 	const taskVisibilityHandler = (type) => {
 		if (type === 'new') {
-			setToggleTaskVisibility(prevState => {
-				return { ...prevState, 'new': !prevState.new };
-			})
+			setToggleTaskVisibility((prevState) => {
+				return { ...prevState, new: !prevState.new };
+			});
 		}
 		if (type === 'inProgress') {
-			setToggleTaskVisibility(prevState => {
-				return {...prevState, 'inProgress': !prevState.inProgress}
-			})
+			setToggleTaskVisibility((prevState) => {
+				return { ...prevState, inProgress: !prevState.inProgress };
+			});
 		}
 		if (type === 'done') {
 			setToggleTaskVisibility((prevState) => {
@@ -67,7 +67,7 @@ const Home = () => {
 		}
 	};
 
-	const handleAddTaskSubmit = (event) => {
+	const handleAddTaskSubmit = async (event) => {
 		event.preventDefault();
 		const data = new FormData(event.currentTarget);
 		let title = data.get('title');
@@ -77,13 +77,34 @@ const Home = () => {
 			taskId: taskId,
 			title: title,
 			description: description,
-			assignee: assignee,
+			assignee: assignee === 'self' ? currentUser.uid : assignee,
 			taskStatus: 'New',
 			created: new Date().toLocaleString(),
 			startDate: startDate.toLocaleString(),
 			endDate: endDate.toLocaleString(),
 		};
-		set(ref(database, 'allTasks/' + taskId), newTask);
+		let userRefSnapshot;
+		let parsedUid = '';
+		if (assignee === 'self') {
+			parsedUid = currentUser.uid;
+		} else if (assignee !== '') {
+			parsedUid = assignee;
+		}
+		userRefSnapshot = await get(child(ref(database), 'users/' + parsedUid)).then((snapshot) => {
+			if (snapshot.exists()) {
+				return snapshot.val();
+			}
+		});
+		console.log(userRefSnapshot);
+		let tasksToAdd = [];
+		if (userRefSnapshot.assignedTasks) {
+			tasksToAdd = [...userRefSnapshot.assignedTasks, taskId];
+		} else {
+			tasksToAdd = [taskId];
+		}
+		console.log(tasksToAdd);
+		await update(ref(database, 'users/' + parsedUid), { assignedTasks: tasksToAdd });
+		await set(ref(database, 'allTasks/' + taskId), newTask);
 		console.log(newTask);
 		setOpen(false);
 		displayTasks();
@@ -135,7 +156,11 @@ const Home = () => {
 		<Box sx={{ display: 'flex', flexDirection: 'column', gap: '1rem', width: '100%', height: '100%' }}>
 			<ResponsiveAppBar currentUser={currentUser} />
 			<Box sx={{ display: 'flex', gap: '1rem', paddingBlockEnd: '1rem', flexGrow: 1, marginInline: '1rem' }}>
-				<Status allTasksStatus={allTasksStatus} taskVisibilityHandler={taskVisibilityHandler} />
+				<Status
+					allTasksStatus={allTasksStatus}
+					taskVisibilityHandler={taskVisibilityHandler}
+					toggleTaskVisibility={toggleTaskVisibility}
+				/>
 				<Tasks
 					currentUser={currentUser}
 					allTasks={allTasks}

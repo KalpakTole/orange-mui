@@ -46,7 +46,7 @@ const Signup = () => {
 			console.log(result);
 			let userId = result.user.uid
 			let newUser = { uid: userId, email: email, name: displayName }
-			set(ref(database, 'users/' + userId), newUser);
+			await set(ref(database, 'users/' + userId), newUser);
 			navigate('/');
 		} catch (error) {
 			console.log(error.message);
@@ -69,7 +69,7 @@ const Signup = () => {
 					<LockOutlinedIcon />
 				</Avatar>
 				<Typography component='h1' variant='h5'>
-					Log in to enter Orange world!
+					Sign up to enter Orange world!
 				</Typography>
 				<Box component='form' onSubmit={handleSignupSubmit} noValidate sx={{ mt: 1 }}>
 					<TextField

@@ -30,3 +30,7 @@ createTaskModal =>
 3. assign to
 4. start date
 5. end date
+
+Add Task button at top left above Statuses
+FAB for creating a team
+Task functionality like Gmail

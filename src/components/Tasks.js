@@ -21,10 +21,15 @@ import {
 	ListItemAvatar,
 	Avatar,
 	ListItemText,
+	Checkbox,
+	ListItemButton,
+	ListItemSecondaryAction,
+	ListItemIcon,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import WorkIcon from '@mui/icons-material/Work';
 import TaskIcon from '@mui/icons-material/Task';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
@@ -79,16 +84,47 @@ const Tasks = (props) => {
 					{props.allTasks.map((currentTask) => {
 						if (currentTask['taskStatus'] === 'New' && props.toggleTaskVisibility['new']) {
 							return (
-								<ListItem key={currentTask['taskId']} sx={{ backgroundColor: lightBlue['A100'] }}>
-									<ListItemAvatar>
+								<ListItem
+									key={currentTask['taskId']}
+									sx={{
+										background: `linear-gradient(to right, transparent 0 95%, ${lightBlue['A100']} 95% 100%)`,
+										padding: 0,
+										margin: 0,
+										boxShadow: '0px 1px 1px 0px #444444',
+										cursor: 'pointer',
+										':hover': {
+											boxShadow: '0px 1px 1px 1px #444444',
+										},
+									}}
+								>
+									<Checkbox color='default' />
+									{/* <ListItemAvatar>
 										<Avatar sx={{ backgroundColor: lightBlue[900] }}>
 											<TaskIcon />
 										</Avatar>
-									</ListItemAvatar>
+									</ListItemAvatar> */}
 									<ListItemText
+										sx={{ marginInlineStart: '1rem' }}
 										primary={currentTask['title']}
 										secondary={currentTask['description']}
 									/>
+									<ListItemIcon
+										sx={{
+											cursor: 'pointer',
+											overflow: 'hidden',
+											borderRadius: '100%',
+											padding: '0.25rem',
+											margin: '0'
+										}}
+									>
+										<DeleteIcon
+											sx={{
+												':hover': {
+													outline: '2px solid black'
+												},
+											}}
+										/>
+									</ListItemIcon>
 								</ListItem>
 							);
 						}
@@ -182,10 +218,13 @@ const Tasks = (props) => {
 							<MenuItem value=''>
 								<em>None</em>
 							</MenuItem>
+							<MenuItem value='self'>
+								<em>Self</em>
+							</MenuItem>
 							{allUsers.map(
 								(user) =>
-									user.name !== props.currentUser.displayName && (
-										<MenuItem key={user.uid} value={user.name}>
+									user.uid !== props.currentUser.uid && (
+										<MenuItem key={user.uid} value={user.uid}>
 											{user.name}
 										</MenuItem>
 									)
@@ -209,10 +248,10 @@ const Tasks = (props) => {
 					</LocalizationProvider>
 				</DialogContent>
 				<DialogActions>
-					<Button type='submit' variant='contained'>
+					<Button type='submit' variant='contained' color='primary'>
 						Create
 					</Button>
-					<Button onClick={props.handleClose} variant='contained'>
+					<Button onClick={props.handleClose} variant='contained' color='secondary'>
 						Cancel
 					</Button>
 				</DialogActions>
